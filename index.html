@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>GBA Online</title>
+  <style>
+    body { background: #111; color: white; font-family: sans-serif; text-align: center; }
+    h1 { margin-top: 20px; }
+    .games { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px; }
+    .game { background: #222; padding: 10px; border-radius: 10px; cursor: pointer; width: 150px; }
+    canvas { margin-top: 20px; border: 3px solid #fff; display: none; }
+  </style>
+</head>
+<body>
+  <h1>Minha Biblioteca GBA</h1>
+  <div class="games">
+    <div class="game" onclick="loadGame('roms/pokemon_ruby.gba')">Pokémon Ruby</div>
+  </div>
+
+  <canvas id="screen" width="480" height="320"></canvas>
+
+  <script src="gba.min.js"></script>
+  <script>
+    const canvas = document.getElementById("screen");
+    const emulator = new GameBoyAdvance();
+    emulator.setCanvas(canvas);
+
+    async function loadGame(path) {
+      const response = await fetch(path);
+      const buffer = await response.arrayBuffer();
+      emulator.loadRom(new Uint8Array(buffer), () => {
+        canvas.style.display = "block";
+        emulator.run();
+      });
+    }
+  </script>
+</body>
+</html>
