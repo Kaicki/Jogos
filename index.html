@@ -2,26 +2,45 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>GBA Online</title>
+  <title>GBAflix 🎮</title>
   <style>
-    body { background: #111; color: white; font-family: sans-serif; text-align: center; }
-    h1 { margin-top: 20px; }
-    .games { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px; }
-    .game { background: #222; padding: 10px; border-radius: 10px; cursor: pointer; width: 150px; }
-    canvas { margin-top: 20px; border: 3px solid #fff; display: none; }
+    body { background: #111; color: white; font-family: sans-serif; margin: 0; }
+    h1 { text-align: center; padding: 20px; }
+    .library { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 20px; }
+    .game { cursor: pointer; transition: transform 0.2s; }
+    .game:hover { transform: scale(1.05); }
+    .game img { width: 100%; border-radius: 10px; }
+    #screen { display: none; margin: 20px auto; border: 3px solid #fff; }
+    #back { display: none; margin: 10px auto; padding: 10px 20px; border: none; background: crimson; color: white; cursor: pointer; border-radius: 5px; }
   </style>
 </head>
 <body>
-  <h1>Minha Biblioteca GBA</h1>
-  <div class="games">
-    <div class="game" onclick="loadGame('roms/pokemon_ruby.gba')">Pokémon Ruby</div>
+  <h1>🎮 Minha Biblioteca GBA</h1>
+
+  <!-- Galeria de jogos -->
+  <div class="library">
+    <div class="game" onclick="loadGame('roms/pokemon_ruby.gba')">
+      <img src="covers/pokemon_ruby.jpg" alt="Pokémon Ruby">
+    </div>
+    <div class="game" onclick="loadGame('roms/pokemon_emerald.gba')">
+      <img src="covers/pokemon_emerald.jpg" alt="Pokémon Emerald">
+    </div>
+    <div class="game" onclick="loadGame('roms/mario.gba')">
+      <img src="covers/mario.jpg" alt="Mario">
+    </div>
   </div>
 
+  <!-- Botão voltar -->
+  <button id="back" onclick="goBack()">⬅ Voltar à Biblioteca</button>
+
+  <!-- Tela do jogo -->
   <canvas id="screen" width="480" height="320"></canvas>
 
   <script src="gba.min.js"></script>
   <script>
     const canvas = document.getElementById("screen");
+    const backBtn = document.getElementById("back");
+    const library = document.querySelector(".library");
     const emulator = new GameBoyAdvance();
     emulator.setCanvas(canvas);
 
@@ -29,9 +48,18 @@
       const response = await fetch(path);
       const buffer = await response.arrayBuffer();
       emulator.loadRom(new Uint8Array(buffer), () => {
+        library.style.display = "none";
         canvas.style.display = "block";
+        backBtn.style.display = "block";
         emulator.run();
       });
+    }
+
+    function goBack() {
+      emulator.stop && emulator.stop(); // para se o emulador tiver stop()
+      canvas.style.display = "none";
+      backBtn.style.display = "none";
+      library.style.display = "grid";
     }
   </script>
 </body>
